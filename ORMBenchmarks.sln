@@ -5,11 +5,9 @@ VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ORMBenchmarks", "ORMBenchmarks\ORMBenchmarks.csproj", "{517C76E9-9EB3-469E-80B6-DF09308081D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateBacpac", "CreateBacpac\CreateBacpac.csproj", "{72B8EBA1-1706-4AD0-A5E5-126ABC275DDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ORMBenchmarks.Model", "ORMBenchmarks.Model\ORMBenchmarks.Model.csproj", "{24A9B93F-8B67-40B6-ABCA-DD3B782CDA2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ORMBenchmarks.Model", "Model\ORMBenchmarks.Model.csproj", "{24A9B93F-8B67-40B6-ABCA-DD3B782CDA2E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsertBenchmarks", "InsertBenchmarks\InsertBenchmarks.csproj", "{56EC6407-BC59-4C06-B472-293C5736C243}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlBenchmarks", "SqlBenchmarks\SqlBenchmarks.csproj", "{56EC6407-BC59-4C06-B472-293C5736C243}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		{517C76E9-9EB3-469E-80B6-DF09308081D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{517C76E9-9EB3-469E-80B6-DF09308081D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{517C76E9-9EB3-469E-80B6-DF09308081D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72B8EBA1-1706-4AD0-A5E5-126ABC275DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72B8EBA1-1706-4AD0-A5E5-126ABC275DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72B8EBA1-1706-4AD0-A5E5-126ABC275DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72B8EBA1-1706-4AD0-A5E5-126ABC275DDA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{24A9B93F-8B67-40B6-ABCA-DD3B782CDA2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24A9B93F-8B67-40B6-ABCA-DD3B782CDA2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A9B93F-8B67-40B6-ABCA-DD3B782CDA2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
