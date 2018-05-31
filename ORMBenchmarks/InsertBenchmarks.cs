@@ -12,7 +12,6 @@ using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 using ORMBenchmarks.Drivers;
 using ORMBenchmarks.Model;
-using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace ORMBenchmarks
 {
@@ -30,7 +29,7 @@ namespace ORMBenchmarks
     [ClrJob]
     [MemoryDiagnoser]
     [MarkdownExporter, CsvExporter, RPlotExporter]
-    public class Benchmarks
+    public class InsertBenchmarks
     {
         private readonly DriverFactory driverFactory = new DriverFactory();
 
@@ -60,7 +59,7 @@ namespace ORMBenchmarks
 
             using (var sqlConnection = new SqlConnection(DatabaseConfig.MasterConnectionString)) {
                 sqlConnection.Open();
-                sqlConnection.ExecuteNonQuery($"IF EXISTS(select * from sys.databases where name = '{DatabaseConfig.DatabaseName}') DROP DATABASE {DatabaseConfig.DatabaseName}");
+                sqlConnection.ExecuteNonQuery($"DROP DATABASE IF EXISTS {DatabaseConfig.DatabaseName}");
                 sqlConnection.ExecuteNonQuery($"CREATE DATABASE {DatabaseConfig.DatabaseName}");
                 sqlConnection.Close();
             }
@@ -120,25 +119,25 @@ namespace ORMBenchmarks
         }
 
         [Benchmark]
-        public void InsertSingleEntityAggregate()
+        public void InsertSingle()
         {
             driver.InsertOne(GenerateProduct(0));
         }
 
         [Benchmark]
-        public void InsertMultiEntityAggregate()
+        public void InsertMultiple()
         {
             driver.InsertOne(GenerateOrder(0));
         }
 
         [Benchmark]
-        public Product QuerySingleEntityAggregate()
+        public Product QuerySingle()
         {
             return driver.QueryOne<Product>(p => p.Id == randomProductId);
         }
 
         [Benchmark]
-        public Order QueryMultiEntityAggregate()
+        public Order QueryMultiple()
         {
             return driver.QueryOne<Order>(o => o.Id == randomOrderId);
         }

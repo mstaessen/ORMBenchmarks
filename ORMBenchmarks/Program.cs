@@ -6,7 +6,7 @@ namespace ORMBenchmarks
     {
         public static void Main(string[] args)
         {
-            BenchmarkRunner.Run<Benchmarks>();
+            BenchmarkRunner.Run<InsertBenchmarks>();
 
 //            foreach (var orm in new[] {Orm.NHibernate, Orm.EntityFramework, Orm.EntityFrameworkCore}) {
 //                var b = new Benchmarks {
