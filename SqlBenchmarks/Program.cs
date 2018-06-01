@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes.Columns;
 using BenchmarkDotNet.Attributes.Exporters;
 using BenchmarkDotNet.Attributes.Jobs;
 using BenchmarkDotNet.Configs;
@@ -7,10 +8,11 @@ using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
-using BenchmarkDotNet.Attributes.Columns;
 
 namespace SqlBenchmarks
 {
@@ -24,6 +26,8 @@ namespace SqlBenchmarks
             // Count = 10
             // };
             // benchmark.GlobalSetup();
+            // benchmark.IterationSetup();
+            // benchmark.Ef6();
         }
     }
 
@@ -178,15 +182,87 @@ namespace SqlBenchmarks
                 sqlConnection.Open();
                 using (var sqlBulkCopy = new SqlBulkCopy(sqlConnection) {
                     BatchSize = batchSize,
-                    DestinationTableName = "Person"
+                    DestinationTableName = "Person",
+                    ColumnMappings = {
+                        {"FirstName", "FirstName"},
+                        {"LastName", "LastName"},
+                        {"BirthDate", "BirthDate"},
+                        {"Email", "Email"},
+                        {"Address", "Address"},
+                    }
                 }) {
                     sqlBulkCopy.WriteToServer(dt);
                 }
             }
         }
+
+        [Benchmark]
+        public void Ef6()
+        {
+            using (var sqlConnection = new SqlConnection(DatabaseConnectionString)) {
+                sqlConnection.Open();
+                using (var context = new BenchmarkContext(sqlConnection, false)) {
+                    context.People.AddRange(people);
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        [Benchmark]
+        [Arguments(10)]
+        [Arguments(100)]
+        [Arguments(1000)]
+        public void Ef6Batch(int batchSize)
+        {
+            using (var sqlConnection = new SqlConnection(DatabaseConnectionString)) {
+                sqlConnection.Open();
+                using (var context = new BenchmarkContext(sqlConnection, false)) {
+                    foreach (var bucket in people.Bucketize(batchSize)) {
+                        var bucketArray = bucket.ToArray();
+                        context.People.AddRange(bucketArray);
+                        context.SaveChanges();
+                    }
+                }
+            }
+        }
+
+        [Benchmark]
+        [Arguments(10)]
+        [Arguments(100)]
+        [Arguments(1000)]
+        public void Ef6BatchAndEvict(int batchSize)
+        {
+            using (var sqlConnection = new SqlConnection(DatabaseConnectionString)) {
+                sqlConnection.Open();
+                using (var context = new BenchmarkContext(sqlConnection, false)) {
+                    foreach (var bucket in people.Bucketize(batchSize)) {
+                        var bucketArray = bucket.ToArray();
+                        context.People.AddRange(bucketArray);
+                        context.SaveChanges();
+                        foreach (var entry in context.ChangeTracker.Entries()) {
+                            entry.State = EntityState.Detached;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    internal class Person
+    public class BenchmarkContext : DbContext
+    {
+        public BenchmarkContext(SqlConnection existingConnection, bool contextOwnsConnection)
+            : base(existingConnection, contextOwnsConnection) { }
+
+        public DbSet<Person> People { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Person>().ToTable("Person");
+            modelBuilder.Entity<Person>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+        }
+    }
+
+    public class Person
     {
         public long Id { get; set; }
 
